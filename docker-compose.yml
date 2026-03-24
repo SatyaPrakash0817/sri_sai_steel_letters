@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sri-sai-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: srisai_dev_password
+      MYSQL_DATABASE: srisai_steel
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sri-sai-backend
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: srisai_dev_password
+      DB_NAME: srisai_steel
+      JWT_SECRET: sri-sai-steel-letters-production-secret-2026
+      EMAIL_USER: srisaisteelletters@gmail.com
+      EMAIL_PASSWORD: suxqugdohhwnsoda
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    name: sri-sai-network

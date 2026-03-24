@@ -1,0 +1,47 @@
+runtime: nodejs20
+
+# Google App Engine configuration for Sri Sai Steel Letters
+
+env: standard
+
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 2
+  target_cpu_utilization: 0.65
+
+handlers:
+  # Serve static files from dist directory
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+
+  - url: /logo.png
+    static_files: dist/logo.png
+    upload: dist/logo.png
+    secure: always
+
+  - url: /robots.txt
+    static_files: dist/robots.txt
+    upload: dist/robots.txt
+    secure: always
+
+  - url: /sitemap.xml
+    static_files: dist/sitemap.xml
+    upload: dist/sitemap.xml
+    secure: always
+
+  # API routes handled by Node.js server
+  - url: /api/.*
+    script: auto
+    secure: always
+
+  # All other routes serve index.html for client-side routing
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+
+env_variables:
+  NODE_ENV: "production"
