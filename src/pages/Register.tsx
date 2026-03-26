@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { buildApiUrl } from '../utils/api';
 
 async function parseApiResponse(res: Response) {
     const raw = await res.text();
@@ -48,7 +49,7 @@ export default function Register() {
         
         setLoading(true);
         try {
-            const res = await fetch('/api/send-otp', {
+            const res = await fetch(buildApiUrl('/api/send-otp'), {
                 method: 'POST',
                 headers: apiHeaders,
                 body: JSON.stringify({ email }), // Changed from phone + email to email only
@@ -71,7 +72,7 @@ export default function Register() {
         
         setLoading(true);
         try {
-            const res = await fetch('/api/register', {
+            const res = await fetch(buildApiUrl('/api/register'), {
                 method: 'POST',
                 headers: apiHeaders,
                 body: JSON.stringify({ name, email, phone, password, otp }),

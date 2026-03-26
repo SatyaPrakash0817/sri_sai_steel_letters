@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Title from '../components/Title';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 export default function Contact() {
     const { token } = useAuth();
@@ -19,7 +20,7 @@ export default function Contact() {
 
         async function loadProfile() {
             try {
-                const res = await fetch('/api/profile', {
+                const res = await fetch(buildApiUrl('/api/profile'), {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ export default function Contact() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/messages', {
+            const res = await fetch(buildApiUrl('/api/messages'), {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,

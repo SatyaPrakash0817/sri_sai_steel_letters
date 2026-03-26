@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 interface UserData {
   id: number;
@@ -26,7 +27,7 @@ export default function UserProfile() {
       }
 
       try {
-        const res = await fetch('/api/profile', {
+        const res = await fetch(buildApiUrl('/api/profile'), {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         

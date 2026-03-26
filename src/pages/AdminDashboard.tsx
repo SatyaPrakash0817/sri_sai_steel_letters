@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Users, Mail, Calendar, Phone, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 interface Message {
   id: number;
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      const response = await fetch('/api/admin/users', {
+      const response = await fetch(buildApiUrl('/api/admin/users'), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

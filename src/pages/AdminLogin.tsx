@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ const AdminLogin = () => {
     }
 
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch(buildApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

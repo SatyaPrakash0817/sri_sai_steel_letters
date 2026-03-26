@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 async function parseApiResponse(res: Response) {
     const raw = await res.text();
@@ -41,7 +42,7 @@ export default function Login() {
         if (!password) return setError('Please enter your password');
         setLoading(true);
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch(buildApiUrl('/api/login'), {
                 method: 'POST',
                 headers: apiHeaders,
                 body: JSON.stringify({ email, password }),

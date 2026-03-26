@@ -18,7 +18,7 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
 	return (
-		<BrowserRouter>
+		<BrowserRouter basename={import.meta.env.BASE_URL}>
 			<AuthProvider>
 				<SoftBackdrop />
 				<LenisScroll />

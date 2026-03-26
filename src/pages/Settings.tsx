@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { buildApiUrl } from '../utils/api';
 
 interface UserData {
   id: number;
@@ -45,7 +46,7 @@ export default function Settings() {
       }
 
       try {
-        const res = await fetch('/api/profile', {
+        const res = await fetch(buildApiUrl('/api/profile'), {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -90,7 +91,7 @@ export default function Settings() {
 
     setProfileLoading(true);
     try {
-      const res = await fetch('/api/profile/update', {
+      const res = await fetch(buildApiUrl('/api/profile/update'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +144,7 @@ export default function Settings() {
 
     setPasswordLoading(true);
     try {
-      const res = await fetch('/api/password/change', {
+      const res = await fetch(buildApiUrl('/api/password/change'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

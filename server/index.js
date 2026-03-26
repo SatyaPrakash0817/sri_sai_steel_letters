@@ -20,7 +20,36 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-app.use(cors());
+const configuredOrigins = (process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (process.env.NODE_ENV !== 'production') {
+  configuredOrigins.push('http://localhost:5173', 'http://127.0.0.1:5173');
+}
+
+const allowedOrigins = [...new Set(configuredOrigins)];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (
+      allowedOrigins.length === 0
+      || allowedOrigins.includes('*')
+      || allowedOrigins.includes(origin)
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('CORS origin not allowed'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Return JSON when request bodies contain invalid JSON.
@@ -142,8 +171,6 @@ async function initDatabase() {
     connection.release();
   }
 }
-
-initDatabase();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
@@ -534,9 +561,9 @@ async function startServer() {
     console.log('Initializing email service...');
     await initializeMailer;
     
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
-      console.log(`✅ Health check: http://0.0.0.0:${PORT}/api/health`);
+    const server = app.listen(PORT, HOST, () => {
+      console.log(`✅ Server running at http://${HOST}:${PORT}`);
+      console.log(`✅ Health check: http://${HOST}:${PORT}/api/health`);
     });
     
     server.on('error', (err) => {
@@ -549,8 +576,8 @@ async function startServer() {
     
     // Try to start server anyway without DB for health checks
     console.log('⚠️  Starting server without database...');
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`⚠️  Server running in degraded mode at http://0.0.0.0:${PORT}`);
+    app.listen(PORT, HOST, () => {
+      console.log(`⚠️  Server running in degraded mode at http://${HOST}:${PORT}`);
     });
   }
 }

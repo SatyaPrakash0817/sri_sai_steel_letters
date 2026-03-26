@@ -1,26 +1,18 @@
-# Use official Node.js runtime as a parent image
-FROM node:22-alpine
-
-# Set working directory in container
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy the rest of the application
+RUN npm ci
 COPY . .
-
-# Build the frontend
 RUN npm run build
 
-# Expose the port
+FROM node:22-alpine AS runtime
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/server ./server
+COPY --from=builder /app/dist ./dist
+
+ENV NODE_ENV=production
 EXPOSE 4000
 
-# Set production environment
-ENV NODE_ENV=production
-
-# Start the backend server
-CMD ["node", "server/index.js"]
+CMD ["npm", "run", "start:backend"]
