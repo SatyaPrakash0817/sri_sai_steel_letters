@@ -97,17 +97,21 @@ const initializeMailer = (async () => {
       socketTimeout: 15000
     });
 
-    await transporter.verify();
+    // Don't call verify() - it can timeout in Railway. Transporter will fail on actual send if SMTP is down.
     emailMode = 'smtp';
     mailerError = null;
-    console.log(`[MAIL] SMTP ready (${smtpHost}:${smtpPort}, secure=${smtpSecure})`);
+    console.log(`[MAIL] SMTP configured (${smtpHost}:${smtpPort}, secure=${smtpSecure})`);
   } catch (err) {
     transporter = null;
     emailMode = 'disabled';
     mailerError = err.message || 'SMTP initialization failed';
-    console.error(`[MAIL] SMTP setup failed: ${mailerError}`);
+    console.warn(`[MAIL] SMTP setup failed: ${mailerError}`);
+    // Silently continue - don't crash the server
   }
-})();
+})().catch(err => {
+  console.warn('[MAIL] Unexpected error during initialization:', err);
+  // Ensure server continues even with SMTP errors
+});
 
 // In-memory OTP storage (for demo; use Redis in production)
 const otpStorage = new Map();
