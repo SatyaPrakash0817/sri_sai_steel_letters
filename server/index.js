@@ -558,9 +558,11 @@ async function startServer() {
     await initDatabase();
     console.log('MySQL connected successfully!');
     
-    // Wait for email service to initialize
+    // Initialize email service in background (non-blocking)
     console.log('Initializing email service...');
-    await initializeMailer;
+    initializeMailer.catch(err => {
+      console.warn('[MAIL] Background initialization error:', err.message);
+    });
     
     const server = app.listen(PORT, HOST, () => {
       console.log(`✅ Server running at http://${HOST}:${PORT}`);
