@@ -84,6 +84,7 @@ const initializeMailer = (async () => {
       host: smtpHost,
       port: smtpPort,
       secure: smtpSecure,
+      family: 4, // Force IPv4 (Railway doesn't support IPv6 to external services)
       auth: {
         user: smtpUser,
         pass: smtpPass
